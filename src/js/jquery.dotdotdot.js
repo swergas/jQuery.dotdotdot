@@ -355,6 +355,13 @@
 					var e	= this,
 						$e	= $(e);
 
+					var addAfter = function(elem) {
+						if ( after && !$e.is( o.after ) && !$e.find( o.after ).length  )
+						{
+							elem[ elem.is( notx ) ? 'after' : 'append' ]( after );
+						}
+					};
+
 					if ( typeof e == 'undefined' || ( e.nodeType == 3 && $.trim( e.data ).length == 0 ) )
 					{
 						return true;
@@ -370,10 +377,7 @@
 					else
 					{
 						$elem.append( $e );
-						if ( after && !$e.is( o.after ) && !$e.find( o.after ).length  )
-						{
-							$elem[ $elem.is( notx ) ? 'after' : 'append' ]( after );
-						}
+						addAfter( $elem );
 						if ( test( $i, o ) )
 						{
 							if ( e.nodeType == 3 ) // node is TEXT
@@ -387,7 +391,9 @@
 
 							if ( !isTruncated )
 							{
-								$e.detach();
+								var txt = addEllipsis( getTextContent( e ), o );
+								setTextContent( e, txt );
+								addAfter( $e );
 								isTruncated = true;
 							}
 						}
