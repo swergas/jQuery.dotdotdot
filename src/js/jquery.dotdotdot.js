@@ -156,7 +156,7 @@
 
 			).bind(
 				'destroy.dot',
-				function( e )
+				function( e, fn )
 				{
 					e.preventDefault();
 					e.stopPropagation();
@@ -169,6 +169,10 @@
 						.append( orgContent )
 						.attr( 'style', $dot.data( 'dotdotdot-style' ) || '' )
 						.data( 'dotdotdot', false );
+					if ( typeof fn == 'function' )
+					{
+						fn.call( $dot[ 0 ] );
+					}
 				}
 			);
 			return $dot;
