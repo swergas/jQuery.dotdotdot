@@ -77,6 +77,16 @@
 						}
 					}
 
+					var after = false,
+						trunc = false;
+
+					if ( conf.afterElement )
+					{
+						after = conf.afterElement.clone( true );
+						after.show();
+						conf.afterElement.detach();
+					}
+
 					$inr = $dot.wrapInner( '<div class="dotdotdot" />' ).children();
 					$inr.contents()
 						.detach()
@@ -92,16 +102,6 @@
 							'padding'	: 0,
 							'margin'	: 0
 						});
-
-					var after = false,
-						trunc = false;
-
-					if ( conf.afterElement )
-					{
-						after = conf.afterElement.clone( true );
-					    after.show();
-						conf.afterElement.detach();
-					}
 
 					if ( test( $inr, opts ) )
 					{
