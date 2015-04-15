@@ -1,5 +1,5 @@
 /*
- *	jQuery dotdotdot 1.7.2
+ *	jQuery dotdotdot 1.7.3
  *
  *	Copyright (c) Fred Heusschen
  *	www.frebsite.nl
@@ -77,6 +77,16 @@
 						}
 					}
 
+					var after = false,
+						trunc = false;
+
+					if ( conf.afterElement )
+					{
+						after = conf.afterElement.clone( true );
+						after.show();
+						conf.afterElement.detach();
+					}
+
 					$inr = $dot.wrapInner( '<div class="dotdotdot" />' ).children();
 					$inr.contents()
 						.detach()
@@ -92,16 +102,6 @@
 							'padding'	: 0,
 							'margin'	: 0
 						});
-
-					var after = false,
-						trunc = false;
-
-					if ( conf.afterElement )
-					{
-						after = conf.afterElement.clone( true );
-					    after.show();
-						conf.afterElement.detach();
-					}
 
 					if ( test( $inr, opts ) )
 					{
@@ -156,7 +156,7 @@
 
 			).bind(
 				'destroy.dot',
-				function( e )
+				function( e, fn )
 				{
 					e.preventDefault();
 					e.stopPropagation();
@@ -169,6 +169,10 @@
 						.append( orgContent )
 						.attr( 'style', $dot.data( 'dotdotdot-style' ) || '' )
 						.data( 'dotdotdot', false );
+					if ( typeof fn == 'function' )
+					{
+						fn.call( $dot[ 0 ] );
+					}
 				}
 			);
 			return $dot;
@@ -355,6 +359,13 @@
 					var e	= this,
 						$e	= $(e);
 
+					var addAfter = function(elem) {
+						if ( after && !$e.is( o.after ) && !$e.find( o.after ).length  )
+						{
+							elem[ elem.is( notx ) ? 'after' : 'append' ]( after );
+						}
+					};
+
 					if ( typeof e == 'undefined' || ( e.nodeType == 3 && $.trim( e.data ).length == 0 ) )
 					{
 						return true;
@@ -370,10 +381,7 @@
 					else
 					{
 						$elem.append( $e );
-						if ( after && !$e.is( o.after ) && !$e.find( o.after ).length  )
-						{
-							$elem[ $elem.is( notx ) ? 'after' : 'append' ]( after );
-						}
+						addAfter( $elem );
 						if ( test( $i, o ) )
 						{
 							if ( e.nodeType == 3 ) // node is TEXT
@@ -387,7 +395,9 @@
 
 							if ( !isTruncated )
 							{
-								$e.detach();
+								var txt = addEllipsis( getTextContent( e ), o );
+								setTextContent( e, txt );
+								addAfter( $e );
 								isTruncated = true;
 							}
 						}
